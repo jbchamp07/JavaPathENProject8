@@ -152,5 +152,15 @@ public class TourGuideService {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 	    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
-	
+
+	public Map mostRecentLocations() {
+
+		Map<String, Location> usersLocation = new HashMap<>();
+		List<User> allUsers = getAllUsers();
+		for(int i = 0; i < getAllUsers().size();i++){
+			usersLocation.put(allUsers.get(i).getUserId().toString(),allUsers.get(i).getLastVisitedLocation().location);
+		}
+		return usersLocation;
+
+	}
 }
