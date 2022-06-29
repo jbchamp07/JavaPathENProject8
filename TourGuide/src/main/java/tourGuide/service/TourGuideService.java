@@ -88,7 +88,7 @@ public class TourGuideService {
 	public VisitedLocation trackUserLocation(User user) {
 		final VisitedLocation[] visitedLocationReturn = new VisitedLocation[1];
 		//TODO
-		ExecutorService executorService = Executors.newFixedThreadPool(100);
+		ExecutorService executorService = Executors.newFixedThreadPool(200);
 		executorService.execute(new Runnable() {
 			@Override
 			public void run() {
