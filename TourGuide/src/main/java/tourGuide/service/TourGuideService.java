@@ -86,18 +86,22 @@ public class TourGuideService {
 	}
 	
 	public VisitedLocation trackUserLocation(User user) {
-		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
-		user.addToVisitedLocations(visitedLocation);
+		final VisitedLocation[] visitedLocationReturn = new VisitedLocation[1];
 		//TODO
 		ExecutorService executorService = Executors.newFixedThreadPool(100);
 		executorService.execute(new Runnable() {
 			@Override
 			public void run() {
+
+				VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
+				user.addToVisitedLocations(visitedLocation);
+
 				rewardsService.calculateRewards(user);
+				visitedLocationReturn[0] = visitedLocation;
 			}
 		});
 		executorService.shutdown();
-		return visitedLocation;
+		return visitedLocationReturn[0];
 
 	}
 
