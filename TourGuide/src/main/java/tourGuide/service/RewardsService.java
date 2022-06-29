@@ -1,5 +1,6 @@
 package tourGuide.service;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -49,6 +50,25 @@ public class RewardsService {
 				}
 			}
 		}
+
+
+		/*Iterator<Attraction> attractionsIter = attractions.iterator();
+		Iterator<VisitedLocation> userLocationsIter = userLocations.iterator();
+
+		while (userLocationsIter.hasNext()) {
+			while (attractionsIter.hasNext()) {
+				VisitedLocation vLoc = userLocationsIter.next();
+				Attraction att = attractionsIter.next();
+				if (user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(att.attractionName)).count() == 0){
+					if(nearAttraction(vLoc, att)) {
+						user.addUserReward(new UserReward(vLoc, att, getRewardPoints(att, user)));
+					}
+				}
+			}
+		}*/
+
+
+
 	}
 	
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
