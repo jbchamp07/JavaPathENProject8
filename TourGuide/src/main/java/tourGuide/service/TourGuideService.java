@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -53,7 +55,7 @@ public class TourGuideService {
 	public List<UserReward> getUserRewards(User user) {
 		return user.getUserRewards();
 	}
-	
+
 	public VisitedLocation getUserLocation(User user) {
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
 			user.getLastVisitedLocation() :
@@ -86,8 +88,17 @@ public class TourGuideService {
 	public VisitedLocation trackUserLocation(User user) {
 		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
-		rewardsService.calculateRewards(user);
+		//TODO
+		ExecutorService executorService = Executors.newFixedThreadPool(100);
+		executorService.execute(new Runnable() {
+			@Override
+			public void run() {
+				rewardsService.calculateRewards(user);
+			}
+		});
+		executorService.shutdown();
 		return visitedLocation;
+
 	}
 
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
