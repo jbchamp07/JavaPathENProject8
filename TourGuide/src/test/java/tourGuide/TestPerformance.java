@@ -71,9 +71,9 @@ public class TestPerformance {
 		assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
 	
-	@Ignore
+
 	@Test
-	public void highVolumeGetRewards() {
+	public void highVolumeGetRewards(){
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
@@ -89,7 +89,13 @@ public class TestPerformance {
 		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 	     
 	    allUsers.forEach(u -> rewardsService.calculateRewards(u));
-	    
+
+		/*try {
+			Thread.sleep(allUsers.size() * 12);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}*/
+
 		for(User user : allUsers) {
 			assertTrue(user.getUserRewards().size() > 0);
 		}

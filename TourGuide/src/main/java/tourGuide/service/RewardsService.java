@@ -3,6 +3,9 @@ package tourGuide.service;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
@@ -42,35 +45,36 @@ public class RewardsService {
 		//List<VisitedLocation> userLocations = user.getVisitedLocations();
 		//List<Attraction> attractions = gpsUtil.getAttractions();
 
-		List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
-		List<Attraction> attractions = new CopyOnWriteArrayList<>(gpsUtil.getAttractions());
+		ExecutorService executorService = Executors.newFixedThreadPool(200);
+		executorService.execute(new Runnable() {
+			@Override
+			public void run() {
 
-		for(VisitedLocation visitedLocation : userLocations) {
-			for(Attraction attraction : attractions) {
-				if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
-					if(nearAttraction(visitedLocation, attraction)) {
-						user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+				List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
+				List<Attraction> attractions = new CopyOnWriteArrayList<>(gpsUtil.getAttractions());
+
+				for(VisitedLocation visitedLocation : userLocations) {
+					for(Attraction attraction : attractions) {
+						if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
+							if(nearAttraction(visitedLocation, attraction)) {
+								user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+							}
+						}
 					}
 				}
+
 			}
+		});
+
+		executorService.shutdown();
+		try {
+			if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+				executorService.shutdownNow();
+			}
+		} catch (InterruptedException e) {
+			executorService.shutdownNow();
+			Thread.currentThread().interrupt();
 		}
-
-
-		/*Iterator<Attraction> attractionsIter = attractions.iterator();
-		Iterator<VisitedLocation> userLocationsIter = userLocations.iterator();
-
-		while (userLocationsIter.hasNext()) {
-			while (attractionsIter.hasNext()) {
-				VisitedLocation vLoc = userLocationsIter.next();
-				Attraction att = attractionsIter.next();
-				if (user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(att.attractionName)).count() == 0){
-					if(nearAttraction(vLoc, att)) {
-						user.addUserReward(new UserReward(vLoc, att, getRewardPoints(att, user)));
-					}
-				}
-			}
-		}*/
-
 
 
 	}
