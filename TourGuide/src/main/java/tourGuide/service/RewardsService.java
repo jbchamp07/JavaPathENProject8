@@ -40,18 +40,21 @@ public class RewardsService {
 	public void setDefaultProximityBuffer() {
 		proximityBuffer = defaultProximityBuffer;
 	}
-	
+
 	public void calculateRewards(User user) {
 		//List<VisitedLocation> userLocations = user.getVisitedLocations();
 		//List<Attraction> attractions = gpsUtil.getAttractions();
 
-		ExecutorService executorService = Executors.newFixedThreadPool(200);
+		/*ExecutorService executorService = Executors.newFixedThreadPool(200);
 		executorService.execute(new Runnable() {
 			@Override
-			public void run() {
+			public void run() {*/
 
 				List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
 				List<Attraction> attractions = new CopyOnWriteArrayList<>(gpsUtil.getAttractions());
+
+
+
 
 				for(VisitedLocation visitedLocation : userLocations) {
 					for(Attraction attraction : attractions) {
@@ -63,7 +66,7 @@ public class RewardsService {
 					}
 				}
 
-			}
+			/*}
 		});
 
 		executorService.shutdown();
@@ -74,7 +77,7 @@ public class RewardsService {
 		} catch (InterruptedException e) {
 			executorService.shutdownNow();
 			Thread.currentThread().interrupt();
-		}
+		}*/
 
 
 	}
