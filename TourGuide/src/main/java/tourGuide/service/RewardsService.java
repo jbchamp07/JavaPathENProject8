@@ -45,10 +45,10 @@ public class RewardsService {
 		//List<VisitedLocation> userLocations = user.getVisitedLocations();
 		//List<Attraction> attractions = gpsUtil.getAttractions();
 
-		/*ExecutorService executorService = Executors.newFixedThreadPool(200);
+		ExecutorService executorService = Executors.newFixedThreadPool(200);
 		executorService.execute(new Runnable() {
 			@Override
-			public void run() {*/
+			public void run() {
 
 				List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
 				List<Attraction> attractions = new CopyOnWriteArrayList<>(gpsUtil.getAttractions());
@@ -66,7 +66,7 @@ public class RewardsService {
 					}
 				}
 
-			/*}
+			}
 		});
 
 		executorService.shutdown();
@@ -77,7 +77,7 @@ public class RewardsService {
 		} catch (InterruptedException e) {
 			executorService.shutdownNow();
 			Thread.currentThread().interrupt();
-		}*/
+		}
 
 
 	}
