@@ -5,6 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -107,18 +108,27 @@ public class RewardsService {
 	}
 
 	public List<Attraction> near5Attractions(VisitedLocation visitedLocation) {
-		//List<Attraction> list5Attractions = new ArrayList<>();
-		Attraction[] list5Attractions = new Attraction[]{gpsUtil.getAttractions().get(0), gpsUtil.getAttractions().get(1), gpsUtil.getAttractions().get(2), gpsUtil.getAttractions().get(3), gpsUtil.getAttractions().get(4)};
+		List<Attraction> list5Attractions = new ArrayList<>();
+		//Attraction[] list5Attractions = new Attraction[]{gpsUtil.getAttractions().get(0), gpsUtil.getAttractions().get(1), gpsUtil.getAttractions().get(2), gpsUtil.getAttractions().get(3), gpsUtil.getAttractions().get(4)};
 
-		for(Attraction attraction : gpsUtil.getAttractions()) {
+		/*for(Attraction attraction : gpsUtil.getAttractions()) {
 			for(int j = 0; j < 5;j++){
-				/*if(getDistance(attraction, visitedLocation.location) < getDistance(list5Attractions[j], visitedLocation.location)){
-					list5Attractions[j] = attraction;
-				}*/
+
 
 			}
+		}*/
+
+		list5Attractions = gpsUtil.getAttractions();
+
+		list5Attractions = list5Attractions.stream().sorted(Comparator.comparing(attraction -> getDistance(visitedLocation.location,attraction))).collect(Collectors.toList());
+
+
+		for(int i = 0;list5Attractions.size() > 5;i++){
+			list5Attractions.remove(list5Attractions.size()-1);
 		}
-		List<Attraction> goodList = Arrays.asList(list5Attractions);
-		return goodList;
+
+		//List<Attraction> goodList = Arrays.asList(list5Attractions);
+
+		return list5Attractions;
 	}
 }
