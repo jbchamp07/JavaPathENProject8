@@ -1,7 +1,6 @@
 package tourGuide.service;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,7 +48,6 @@ public class RewardsService {
 		executorService.execute(new Runnable() {
 			@Override
 			public void run() {
-
 				List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
 				List<Attraction> attractions = new CopyOnWriteArrayList<>(gpsUtil.getAttractions());
 
@@ -108,4 +106,19 @@ public class RewardsService {
         return statuteMiles;
 	}
 
+	public List<Attraction> near5Attractions(VisitedLocation visitedLocation) {
+		//List<Attraction> list5Attractions = new ArrayList<>();
+		Attraction[] list5Attractions = new Attraction[]{gpsUtil.getAttractions().get(0), gpsUtil.getAttractions().get(1), gpsUtil.getAttractions().get(2), gpsUtil.getAttractions().get(3), gpsUtil.getAttractions().get(4)};
+
+		for(Attraction attraction : gpsUtil.getAttractions()) {
+			for(int j = 0; j < 5;j++){
+				/*if(getDistance(attraction, visitedLocation.location) < getDistance(list5Attractions[j], visitedLocation.location)){
+					list5Attractions[j] = attraction;
+				}*/
+
+			}
+		}
+		List<Attraction> goodList = Arrays.asList(list5Attractions);
+		return goodList;
+	}
 }

@@ -22,6 +22,8 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import tourGuide.dto.NearAttraction;
+import tourGuide.dto.UserNearAttractions;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -87,7 +89,6 @@ public class TourGuideService {
 	
 	public VisitedLocation trackUserLocation(User user) {
 		final VisitedLocation[] visitedLocationReturn = new VisitedLocation[1];
-		//TODO
 		ExecutorService executorService = Executors.newFixedThreadPool(300);
 		executorService.execute(new Runnable() {
 			@Override
@@ -112,8 +113,28 @@ public class TourGuideService {
 				nearbyAttractions.add(attraction);
 			}
 		}
-		
 		return nearbyAttractions;
+
+	}
+
+
+	public UserNearAttractions nearAttractions(VisitedLocation visitedLocation){
+		List<Attraction> nearbyAttractions = rewardsService.near5Attractions(visitedLocation);
+		UserNearAttractions userNearAttractions = new UserNearAttractions();
+		userNearAttractions.setUserLocation(visitedLocation.location);
+		List<NearAttraction> listNearAttractions = new ArrayList<>();
+		for(int i = 0;i < 5;i++){
+			NearAttraction nearAttraction = new NearAttraction();
+			nearAttraction.setName(nearbyAttractions.get(i).attractionName);
+			Location location = new Location(0,0);
+			nearAttraction.setLocation(location);
+			nearAttraction.setDistance(rewardsService.getDistance(visitedLocation.location,nearbyAttractions.get(i)));
+			//TODO
+			//nearAttraction.setRewardPoints(user.getUserRewards().contains());
+			listNearAttractions.add(nearAttraction);
+		}
+		userNearAttractions.setListAttractions(listNearAttractions);
+		return userNearAttractions;
 	}
 	
 	private void addShutDownHook() {
