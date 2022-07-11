@@ -2,13 +2,7 @@ package tourGuide.service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -16,12 +10,14 @@ import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import rewardCentral.RewardCentral;
 import tourGuide.dto.NearAttraction;
 import tourGuide.dto.UserNearAttractions;
 import tourGuide.helper.InternalTestHelper;
@@ -39,6 +35,8 @@ public class TourGuideService {
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
+	@Autowired
+	private RewardCentral rewardCentral;
 	
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
@@ -88,6 +86,7 @@ public class TourGuideService {
 	}
 	
 	public VisitedLocation trackUserLocation(User user) {
+		Locale.setDefault(Locale.US);
 		final VisitedLocation[] visitedLocationReturn = new VisitedLocation[1];
 		ExecutorService executorService = Executors.newFixedThreadPool(300);
 		executorService.execute(new Runnable() {
@@ -124,13 +123,16 @@ public class TourGuideService {
 		userNearAttractions.setUserLocation(visitedLocation.location);
 		List<NearAttraction> listNearAttractions = new ArrayList<>();
 		for(int i = 0;i < 5;i++){
+
 			NearAttraction nearAttraction = new NearAttraction();
 			nearAttraction.setName(nearbyAttractions.get(i).attractionName);
-			Location location = new Location(0,0);
+
+			Location location = new Location(nearbyAttractions.get(i).latitude,nearbyAttractions.get(i).longitude);
 			nearAttraction.setLocation(location);
 			nearAttraction.setDistance(rewardsService.getDistance(visitedLocation.location,nearbyAttractions.get(i)));
-			//TODO
-			//nearAttraction.setRewardPoints(user.getUserRewards().contains());
+			nearAttraction.setRewardPoints((rewardCentral.getAttractionRewardPoints(nearbyAttractions.get(i).attractionId,visitedLocation.userId)));
+
+
 			listNearAttractions.add(nearAttraction);
 		}
 		userNearAttractions.setListAttractions(listNearAttractions);
